@@ -1,0 +1,36 @@
+
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ratings-deployment
+  labels:
+    app: ratings
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: ratings
+  template:
+    metadata:
+      labels:
+        app: ratings
+    spec:
+      containers:
+      - name: ratings
+        image: 232524493482.dkr.ecr.us-east-1.amazonaws.com/ratings:latest
+        ports:
+        - containerPort: 9080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ratings-Service
+spec:
+  selector:
+    app: ratings
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 9080        
+
