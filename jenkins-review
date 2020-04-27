@@ -1,0 +1,45 @@
+pipeline {
+    agent any
+       triggers {
+        pollSCM "* * * * *"
+       }
+    stages {
+        stage('Clone Repo'){
+          node('master'){
+            cleanWs()
+            checkout([$class: 'GitSCM', branches: [[name: '*/$GIT_BRANCH']], doGenerateSubmoduleConfigurations: false, extensions: [], submoduleCfg: [], userRemoteConfigs: [[url: 'git@github.com:Miths98/Kubernetes.git']]])
+          }
+        }
+
+        stage('Build Maven'){
+          node('master'){
+            withMaven(maven: 'apache-maven3.6'){
+              sh "mvn clean package"
+            } 
+          }
+        }
+        stage('Build Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo '=== Building Review Docker Image ==='
+                script {
+                    app = docker.build("232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews:latest")
+                }
+            }
+        }
+        stage('Push Docker Image') {
+            when {
+                branch 'master'
+            }
+            steps {
+                echo '=== Pushing Review Docker Image ==='
+                script {
+                    docker.withRegistry('https://232524493482.dkr.ecr.us-east-1.amazonaws.com', 'ecrCredentials') {
+                        app.push("${env.BUILD_NUMBER}")
+                        app.push("latest")
+                    }
+                }
+            }
+        }
