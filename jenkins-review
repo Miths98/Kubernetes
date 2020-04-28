@@ -7,7 +7,7 @@ pipeline {
         stage('Build Application') { 
             steps {
                 echo '=== Building Review Application ==='
-                sh 'mvn clean --file *.pom' 
+                sh 'mvn -B -DskipTests clean package' 
             }
         }
         stage('Test Application') {
