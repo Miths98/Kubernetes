@@ -4,14 +4,15 @@ pipeline {
         pollSCM "* * * * *"
        }
     stages {
-
-        stage('Build') { 
+        stage('Build Application') { 
             steps {
+                echo '=== Building Review Application ==='
                 sh 'mvn -B -DskipTests clean package' 
             }
         }
-        stage('Test') {
+        stage('Test Application') {
             steps {
+                echo '=== Testing Review Application ==='
                 sh 'mvn test'
             }
             post {
