@@ -4,12 +4,13 @@ pipeline {
         pollSCM "* * * * *"
        }
     stages {
-        stage('Build Application') { 
-            steps {
-                echo '=== Building Review Application ==='
-                sh 'mvn -B -DskipTests clean package' 
-            }
-        }
+       stage('Gradle Build') {
+           if (isUnix()) {
+               sh './gradlew clean build'
+           } else {
+               bat 'gradlew.bat clean build'
+           }
+       }
         stage('Test Application') {
             steps {
                 echo '=== Testing Review Application ==='
