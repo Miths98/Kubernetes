@@ -5,16 +5,6 @@ pipeline {
         pollSCM '* * * * *'
     }
     stages {
-        stage('Build') {
-            steps {
-                sh './gradle'
-            }
-        }
-        stage('Test') {
-            steps {
-                sh './gradle'
-            }
-        }
         stage('Build Docker Image') {
             when {
                 branch 'master'
