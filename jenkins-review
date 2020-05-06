@@ -12,7 +12,7 @@ pipeline {
             steps {
                 echo '=== Building Review Docker Image ==='
                 script {
-                    app = docker.build("232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews")
+                    app = docker.build("232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews:latest")
                 }
             }
         }
@@ -23,7 +23,7 @@ pipeline {
             steps {
                 echo '=== Pushing Review Docker Image ==='
                 script {
-                    docker.withRegistry('https://232524493482.dkr.ecr.us-east-1.amazonaws.com','ecrCredentials') {
+                    docker.withRegistry('https://232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews:latest','ecrCredentials') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
