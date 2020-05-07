@@ -4,23 +4,7 @@ pipeline {
         pollSCM "* * * * *"
        }
     stages {
-        stage('Build Application') { 
-            steps {
-                echo '=== Building Petclinic Application ==='
-                sh 'gradle clean build' 
-            }
-        }
-        stage('Test Application') {
-            steps {
-                echo '=== Testing Petclinic Application ==='
-                sh 'gradle test'
-            }
-            post {
-                always {
-                    junit 'target/surefire-reports/*.xml'
-                }
-            }
-        }
+        
         stage('Build Docker Image') {
             when {
                 branch 'master'
