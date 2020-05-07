@@ -1,18 +1,34 @@
 pipeline {
     agent any
-
-    triggers {
-        pollSCM '* * * * *'
-    }
+       triggers {
+        pollSCM "* * * * *"
+       }
     stages {
+        stage('Build Application') { 
+            steps {
+                echo '=== Building Petclinic Application ==='
+                sh 'gradle clean build' 
+            }
+        }
+        stage('Test Application') {
+            steps {
+                echo '=== Testing Petclinic Application ==='
+                sh 'gradle test'
+            }
+            post {
+                always {
+                    junit 'target/surefire-reports/*.xml'
+                }
+            }
+        }
         stage('Build Docker Image') {
             when {
                 branch 'master'
             }
             steps {
-                echo '=== Building Review Docker Image ==='
+                echo '=== Building Petclinic Docker Image ==='
                 script {
-                    app = docker.build("232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews:latest")
+                    app = docker.build("232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews")
                 }
             }
         }
@@ -21,15 +37,12 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo '=== Pushing Review Docker Image ==='
+                echo '=== Pushing Petclinic Docker Image ==='
                 script {
-                    docker.withRegistry('https://232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews:latest','ecrCredentials') {
+                    docker.withRegistry('https://232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews', 'ecrCredentials') {
                         app.push("${env.BUILD_NUMBER}")
                         app.push("latest")
                     }
                 }
             }
         }
-      }   
-  }
-}
