@@ -10,7 +10,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo '=== Building Petclinic Docker Image ==='
+                echo '=== Building Review Docker Image ==='
                 script {
                     app = docker.build("232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews")
                 }
@@ -21,7 +21,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                echo '=== Pushing Petclinic Docker Image ==='
+                echo '=== Pushing Review Docker Image ==='
                 script {
                     docker.withRegistry('https://232524493482.dkr.ecr.us-east-1.amazonaws.com/reviews', 'ecrCredentials') {
                         app.push("${env.BUILD_NUMBER}")
